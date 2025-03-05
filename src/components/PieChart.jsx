@@ -1,134 +1,54 @@
-import React, { useEffect } from 'react'
-import { Chart, registerables } from "chart.js"
-import { Pie } from "react-chartjs-2"
+import React from 'react';
+import { Chart, registerables } from "chart.js";
+import { Pie } from "react-chartjs-2";
 Chart.register(...registerables);
 
-
 const PieChart = ({ ChartData }) => {
-
-  console.log('ChartData has been updated:', ChartData);
-
+  // Improved color generation function
   const generateRandomColors = (numColors) => {
-    const colors = []
-    for (let i = 0; i < numColors; i++) {
-      const color = `rgb(${Math.floor(Math.random() * 256)}, ${Math.floor(
-        Math.random() * 256
-      )}, ${Math.floor(Math.random() * 256)})`
-      colors.push(color)
-    }
-    return colors
-  }
-  const chartIncomeData = {
-    labels: ChartData?.labels || ['Red', 'Blue', 'Green'], // Fallback labels if ChartData isn't provided
-    datasets: [
-      {
-        data: ChartData?.datasets || [12, 34, 53], // Fallback data if ChartData isn't provided
-        backgroundColor: generateRandomColors(ChartData?.datasets?.length || 3), // Dynamically generate colors
-      },
-    ],
+    return Array.from({ length: numColors }, () => 
+      `rgb(${Math.floor(Math.random() * 256)}, 
+       ${Math.floor(Math.random() * 256)}, 
+       ${Math.floor(Math.random() * 256)})`
+    );
   };
+
+  // Safely access data with proper fallbacks
+  const labels = ChartData?.labels || ['Red', 'Blue', 'Green'];
+  const dataset = ChartData?.datasets?.[0] || { data: [12, 34, 53] };
+  
+  // Correct dataset structure for Chart.js
+  const chartData = {
+    labels,
+    datasets: [{
+      ...dataset,
+      backgroundColor: generateRandomColors(dataset.data?.length || 3),
+      hoverOffset: 4
+    }]
+  };
+
   const options = {
     maintainAspectRatio: false,
     responsive: true,
-  }
+    plugins: {
+      legend: {
+        position: 'top',
+      },
+      title: {
+        display: true,
+        text: 'Distribution Chart'
+      }
+    }
+  };
+
   return (
-    <div style={{ height: 300}}>
+    <div style={{ height: 300 }}>
       <Pie
-        width={300}
-        data={chartIncomeData}
+        data={chartData}
         options={options}
       />
-
-
     </div>
-  )
-}
+  );
+};
 
 export default PieChart;
-
-// import { useState } from "react"
-// import { Chart, registerables } from "chart.js"
-// import { Pie } from "react-chartjs-2"
-
-// Chart.register(...registerables)
-
-// export default function InstructorChart({ courses }) {
-//   // State to keep track of the currently selected chart
-//   const [currChart, setCurrChart] = useState("students")
-
-//   // Function to generate random colors for the chart
-//   const generateRandomColors = (numColors) => {
-//     const colors = []
-//     for (let i = 0; i < numColors; i++) {
-//       const color = `rgb(${Math.floor(Math.random() * 256)}, ${Math.floor(
-//         Math.random() * 256
-//       )}, ${Math.floor(Math.random() * 256)})`
-//       colors.push(color)
-//     }
-//     return colors
-//   }
-
-//   // Data for the chart displaying student information
-//   const chartDataStudents = {
-//     labels: courses.map((course) => course.courseName),
-//     datasets: [
-//       {
-//         data: courses.map((course) => course.totalStudentsEnrolled),
-//         backgroundColor: generateRandomColors(courses.length),
-//       },
-//     ],
-//   }
-
-//   // Data for the chart displaying income information
-//   const chartIncomeData = {
-//     labels: courses.map((course) => course.courseName),
-//     datasets: [
-//       {
-//         data: courses.map((course) => course.totalAmountGenerated),
-//         backgroundColor: generateRandomColors(courses.length),
-//       },
-//     ],
-//   }
-
-//   // Options for the chart
-//   const options = {
-//     maintainAspectRatio: false,
-//   }
-
-//   return (
-//     <div className="flex flex-1 flex-col gap-y-4 rounded-md bg-richblack-800 p-6">
-//       <p className="text-lg font-bold text-richblack-5">Visualize</p>
-//       <div className="space-x-4 font-semibold">
-//         {/* Button to switch to the "students" chart */}
-//         <button
-//           onClick={() => setCurrChart("students")}
-//           className={`rounded-sm p-1 px-3 transition-all duration-200 ${
-//             currChart === "students"
-//               ? "bg-richblack-700 text-yellow-50"
-//               : "text-yellow-400"
-//           }`}
-//         >
-//           Students
-//         </button>
-//         {/* Button to switch to the "income" chart */}
-//         <button
-//           onClick={() => setCurrChart("income")}
-//           className={`rounded-sm p-1 px-3 transition-all duration-200 ${
-//             currChart === "income"
-//               ? "bg-richblack-700 text-yellow-50"
-//               : "text-yellow-400"
-//           }`}
-//         >
-//           Income
-//         </button>
-//       </div>
-//       <div className="relative mx-auto aspect-square h-[78%] w-full">
-//         {/* Render the Pie chart based on the selected chart */}
-//         <Pie
-//           data={currChart === "students" ? chartDataStudents : chartIncomeData}
-//           options={options}
-//         />
-//       </div>
-//     </div>
-//   )
-// }

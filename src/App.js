@@ -4,10 +4,14 @@ import PieChart from "./components/PieChart";
 import BarChart from "./components/BarChart";
 import LineChart from "./components/LineChart";
 import { data } from "./Data"; // Importing data
+import DoughnutChart from "./components/DoughnutChart";
+import Grid from "./components/Grid";
+import DynamicDataTable from "./components/DynamicDataTable";
 
 function App() {
   // Extract keys dynamically from the first object in data.js
-  const dropdownOptions = Object.keys(data[0] || {});
+  const dropdownOptions = Object.keys(data[0])
+  .filter(key => !['userId', 'email', 'firstName', 'lastName'].includes(key));
 
   // State to hold the selected dropdown option and chart data
   const [selectedOption, setSelectedOption] = useState(dropdownOptions[0] || "");
@@ -19,31 +23,44 @@ function App() {
   // Function to transform data based on the selected dropdown option
   const transformData = (option) => {
     if (!option) return { labels: [], datasets: [] };
-
-    let labels = [];
-    let datasetValues = [];
+  
     const valueCounts = {};
-
+  
     data.forEach((item) => {
       const keyValue = item[option];
-
-      if (typeof keyValue === "string") {
-        valueCounts[keyValue] = (valueCounts[keyValue] || 1) + 1;
-      } else if (typeof keyValue === "number") {
-        valueCounts["Total"] = (valueCounts["Total"] || 0) + keyValue;
+      
+      // Handle array-type properties (roles, regions)
+      if (Array.isArray(keyValue)) {
+        keyValue.forEach(element => {
+          // For nested objects (like roles/regions), use roleName/regionName
+          const value = element[`${option.slice(0, -1)}Name`] || element;
+          valueCounts[value] = (valueCounts[value] || 0) + 1;
+        });
+      }
+      // Handle string values
+      else if (typeof keyValue === 'string') {
+        valueCounts[keyValue] = (valueCounts[keyValue] || 0) + 1;
+      }
+      // Handle number values
+      else if (typeof keyValue === 'number') {
+        valueCounts['Total'] = (valueCounts['Total'] || 0) + keyValue;
       }
     });
-
-    labels = Object.keys(valueCounts);
-    datasetValues = Object.values(valueCounts);
-
+  
+    const labels = Object.keys(valueCounts);
+    const datasetValues = Object.values(valueCounts);
+  
     return {
       labels,
       datasets: [
-       // {
-          //label: `Data for ${option}`,
-           datasetValues
-       // },
+        {
+          label: `Distribution by ${option}`,
+          data: datasetValues,
+          backgroundColor: [
+            '#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', 
+            '#9966FF', '#FF9F40', '#FF8A80', '#A1887F'
+          ],
+        },
       ],
     };
   };
@@ -73,6 +90,10 @@ function App() {
 
       <h2>Line Chart</h2>
       <LineChart ChartData={userdata} />
+      <h2>Doughnut Chart</h2>
+      <DoughnutChart ChartData={userdata} />
+      <Grid ChartData={userdata} />
+      <DynamicDataTable/>
     </div>
   );
 }
