@@ -37,7 +37,7 @@ const PieChart = ({ ChartData }) => {
       title: {
         display: true,
         text: 'Distribution Chart'
-      }
+      },
     }
   };
 
@@ -46,6 +46,7 @@ const PieChart = ({ ChartData }) => {
       <Pie
         data={chartData}
         options={options}
+       
       />
     </div>
   );

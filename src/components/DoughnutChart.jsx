@@ -26,10 +26,10 @@ const DoughnutChart = ({ ChartData }) => {
       borderColor: '#ffffff',
       borderWidth: 2,
       hoverOffset: 8,
-      cutout: '60%' // Adjust doughnut thickness
+      cutout: '30%' // Adjust doughnut thickness
     }]
   };
-
+  const total = dataset.data.reduce((acc, value) => acc + value, 0);
   // Chart options
   const options = {
     maintainAspectRatio: false,
@@ -44,7 +44,21 @@ const DoughnutChart = ({ ChartData }) => {
       },
       tooltip: {
         enabled: true,
-        position: 'nearest'
+        position: 'nearest',
+        callbacks: {
+          label: (tooltipItem) => {
+            const value = tooltipItem.raw;
+            const percentage = ((value / total) * 100).toFixed(2);
+            return `${tooltipItem.label}: ${value} (${percentage}%)`;
+          }
+        }
+      },
+      datalabels: {
+        color: '#fff', // White text for contrast
+        font: { weight: 'bold', size: 14 },
+        formatter: (value) => `${((value / total) * 100).toFixed(1)}%`, // Format as percentage
+        anchor: 'center', // Align in center of slice
+        align: 'center'
       }
     }
   };

@@ -1,5 +1,6 @@
 import React from 'react';
 import { data } from '../Data';
+// import { Table, Thead, Tbody, Tr, Th, Td } from 'react-super-responsive-table';
 
 const DynamicDataTable = () => {
   // Get all unique keys from the data
