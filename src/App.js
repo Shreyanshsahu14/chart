@@ -3,7 +3,7 @@ import { data } from './Data';
 import { transformData } from "../src/components/utils/transformdata";
 import Container from "./components/Container";
 import DynamicDataTable from "./components/DynamicDataTable";
-
+import DropdownWithDialog from "./components/Dropdown";
 const App = () => {
   const dropdownOptions = data.length > 0 
     ? Object.keys(data[0]).filter(
@@ -53,6 +53,7 @@ const App = () => {
 
   return (
     <div style={{ height: "100%", overflowY: "auto" }}>
+   
       <div style={{ marginBottom: 20 }}>
         <label>Select Data Type: </label>
         <select 

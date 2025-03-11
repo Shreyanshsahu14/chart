@@ -5,7 +5,7 @@ import BarChart from './BarChart';
 import LineChart from './LineChart';
 import DoughnutChart from './DoughnutChart';
 import Grid from './Grid';
-
+import Dropdown from "./Dropdown"
 // Memoized chart components to prevent unnecessary re-renders
 const MemoizedPieChart = memo(PieChart);
 const MemoizedBarChart = memo(BarChart);
@@ -51,7 +51,7 @@ const Container = ({
         marginBottom: 16
       }}>
         <h2 style={{ margin: 0 }}>{title}</h2>
-        <DropdownMenu title={title} />
+        <Dropdown/> 
       </div>
 
       {/* Chart content */}
